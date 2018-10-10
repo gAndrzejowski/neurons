@@ -10,10 +10,13 @@ const elementMultiply = (arr, factor) => arr1.map( e => e * factor);
 
 const sumElements = arr => arr.reduce((sum, current) => sum + current);
 
+const createNullArray = length => new Array(length).fill(null);
+
 module.exports = {
     sigmoid,
     vectorMultiply,
     vectorSum,
     elementMultiply,
-    sumElements
+    sumElements,
+    createNullArray
 };

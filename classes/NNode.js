@@ -6,15 +6,17 @@ class NNode {
         this.delta = 0;
     }
 
-    getZElements = input => vectorMultiply(input, this.theta);
+    getZElements(input) {
+        return vectorMultiply(input, this.theta)
+    }
 
-    forwardProp = (input) => {
+    forwardProp(input){
         const z = this.getZElements(input);
         this.activation = sigmoid(sumElements(z));
         return this.activation;
     };
 
-    backwardProp = (weightedDeltas) => {
+    backwardProp(weightedDeltas) {
         const raw = sumElements(weightedDeltas);
         const factor = this.theta * (1 - this.theta);
         this.delta = raw * factor;

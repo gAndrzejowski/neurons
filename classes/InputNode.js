@@ -4,8 +4,8 @@ class InputNode {
     constructor(fixedValue) {
         this.fixedValue = fixedValue
     }
-    forwardProp = value => this.fixedValue || value;
-    backwardProp = () => false;
+    forwardProp(value) { return this.fixedValue || value };
+    backwardProp() {return false};
 }
 
 module.exports = InputNode;

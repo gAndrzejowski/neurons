@@ -1,5 +1,4 @@
 const Network = require('./classes/Network');
 
-const net = new Network(1,1,[2]);
+const net = new Network(1,1,[2, 5, 3]);
 
-console.log(net);
