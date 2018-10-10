@@ -1,6 +1,6 @@
 const sigmoid = (val) => (1 + Math.exp(
     -1 * val
-) ** -1);
+)) ** -1;
 
 const vectorMultiply = (arr1, arr2) => arr1.map( (e, i) => e * arr2[i]);
 
