@@ -7,13 +7,13 @@ class OutputNode extends NNode {
         super(theta);
         this.cost = 0;
     }
-    forwardProp(input) {
-        if (SIGMOID_OUTPUTS) return super.forwardProp(input);
-        else {
-            this.activation = sumElements(this.getZElements(input));
-            return this.activation;
-        }
-    }
+    // forwardProp(input) {
+    //     if (SIGMOID_OUTPUTS) return super.forwardProp(input);
+    //     else {
+    //         this.activation = sumElements(this.getZElements(input));
+    //         return this.activation;
+    //     }
+    // }
 
     backwardProp(teacherValue) {
         // const delta = this.delta;
