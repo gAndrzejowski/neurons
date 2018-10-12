@@ -1,10 +1,18 @@
 const NNode = require('./NNode');
-const {elementMultiply} = require('../misc');
+const {elementMultiply, sumElements} = require('../misc');
+const {SIGMOID_OUTPUTS} = require('../constants');
 
 class OutputNode extends NNode {
     constructor(theta) {
         super(theta);
         this.cost = 0;
+    }
+    forwardProp(input) {
+        if (SIGMOID_OUTPUTS) return super.forwardProp(input);
+        else {
+            this.activation = sumElements(this.getZElements(input));
+            return this.activation;
+        }
     }
 
     backwardProp(teacherValue) {
