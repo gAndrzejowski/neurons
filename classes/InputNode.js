@@ -4,7 +4,10 @@ class InputNode {
     constructor(fixedValue) {
         this.fixedValue = fixedValue
     }
-    forwardProp(value) { return this.fixedValue || value };
+    forwardProp(value) {
+        this.activation = this.fixedValue || value;
+        return this.activation;
+    };
     backwardProp() {return false};
 }
 
