@@ -1,6 +1,7 @@
 const NNode = require('./NNode');
 const InputNode = require('./InputNode');
 const OutputNode = require('./OutputNode');
+const {LAMBDA, LEARNING_RATE, MAX_ITERATIONS} = require('../constants');
 const {createNullArray, sumElements} = require('../misc');
 const {gradientDescent} = require('../learn');
 
@@ -13,7 +14,8 @@ class Network {
         let lastLength = this.inputs.length;
         this.hidden = [];
 
-        hidden.forEach((e) => {
+        hidden.forEach((e, i) => {
+            // console.log(`hidden layer ${i+1} - will get ${lastLength} thetas`)
             const layer = [new InputNode(1)].concat(createNullArray(e).map(
                 () => {
                     const thetas = randomize(lastLength);
@@ -32,6 +34,7 @@ class Network {
         this.lessonsLearnt = 0;
         this.cost = Infinity;
         this.iterations = 0;
+        // console.log(`network structure: ${this.inputs.length} => ${this.hidden.map(hidden => `${hidden.length}/${hidden[1].theta.length}`)} => ${this.outputs.length}/${this.outputs[0].theta.length}`);
     }
 
     getThetaMatrix() {
@@ -73,7 +76,8 @@ class Network {
             if (layerIndex === 0) return;
             layer.forEach((node, nodeIndex) => {
                 if(nodeIndex === 0 && layerIndex<matrix.length-1) return;
-                node.setGradients(matrix[layerIndex - 1].map(inputNode => inputNode.activation));
+                // console.log(`node ${layerIndex},${nodeIndex} with thetas: ${node.theta} will receive gradients from ${matrix[layerIndex - 1].map(inputNode => inputNode.activation)}`)
+                node.setGradients(matrix[layerIndex - 1].map(inputNode => inputNode.activation), [layerIndex, nodeIndex]);
             })
         });
     }
@@ -103,7 +107,7 @@ class Network {
 
     backwardStart(teacherValues) {
         let deltas = this.outputs.map((e, i) => e.backwardProp(teacherValues[i]));
-        const hide = !this.hidden.length ? [] : this.hidden.reverse().map(e => e.slice(1));
+        const hide = !this.hidden.length ? [] : [...this.hidden].reverse().map(e => e.slice(1));
         hide.forEach((layer) => {
             deltas = layer.map((cell, cellIndex) => {
               const indDeltas = deltas.map(outputCell => outputCell[cellIndex]);
@@ -139,7 +143,7 @@ class Network {
 
     iterate(inputs, outputs) {
         let cost = 0;
-        const LAMBDA = 0.0005;
+
         inputs.forEach((input, inputIndex) => {
             this.forwardStart(input);
             this.backwardStart(outputs[inputIndex]);
@@ -149,33 +153,30 @@ class Network {
         });
         cost += LAMBDA / this.lessonsLearnt * this.getRegularization();
         // console.log(`cost in iteration ${this.iterations}: ${this.cost}`);
+        this.cost = cost;
+        const nextThetas = gradientDescent(this.getThetaMatrix(), this.getGradientMatrix(), LEARNING_RATE);
+        this.setThetaMatrix(nextThetas);
+        this.resetCellState();
+        this.lessonsLearnt = 0;
+        this.iterations += 1;
         return cost;
     }
 
     learn(inputs, outputs) {
-        const LEARNING_RATE = 0.1;
 
-        const cost = this.iterate(inputs, outputs);
         // console.log(`iteration: ${this.iterations}, improvement: ${this.cost - cost}, running cost: ${cost}`);
         // console.log(`deltas: ${this.getGradientMatrix()}`);
         // console.log(`thetas: ${this.getThetaMatrix()}`);
-        if (this.iterations > 2000 ) {
-            console.log(`done learning`);
-            return this.cost;
+        while (this.iterations < MAX_ITERATIONS) {
+            this.iterate(inputs, outputs);
+            if (this.iterations % Math.max(100, MAX_ITERATIONS/100) === 0) console.log(`learning ${(this.iterations/MAX_ITERATIONS*100).toFixed(1)}% complete. Cost: ${(this.cost/(this.outputs.length * inputs.length)).toFixed(2)}`);
         }
-        else {
-            this.cost = cost;
-            const nextThetas = gradientDescent(this.getThetaMatrix(), this.getGradientMatrix(), LEARNING_RATE);
-            this.setThetaMatrix(nextThetas);
-            this.resetCellState();
-            this.lessonsLearnt = 0;
-            this.iterations += 1;
-            return this.learn(inputs, outputs);
-        }
+        console.log(`done learning`);
+        return this.cost;
     }
 
     run(inputs) {
-        console.log(`running with input ${inputs}`);
+        // console.log(`running with input ${inputs}`);
         this.forwardStart(inputs);
         const results = this.outputs.map(node => node.activation);
         return results;

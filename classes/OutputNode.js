@@ -8,9 +8,9 @@ class OutputNode extends NNode {
     }
 
     backwardProp(teacherValue) {
-        const delta = this.delta;
+        // const delta = this.delta;
         this.delta = teacherValue - this.activation;
-        console.log(`___Output___ expected: ${teacherValue}, received: ${this.activation} -> delta: ${delta} --> ${this.delta}, cost: ${this.cost} -> ${this.getCost(teacherValue)}`);
+        // console.log(`___Output___ expected: ${teacherValue}, received: ${this.activation} -> delta: ${delta} --> ${this.delta}, cost: ${this.cost} -> ${this.getCost(teacherValue)}`);
         this.cost += this.getCost(teacherValue);
         return  elementMultiply(this.theta,this.delta).slice(1);
     }
@@ -18,6 +18,7 @@ class OutputNode extends NNode {
         const act = this.activation*0.99 + 0.005;
         // console.log('cost parts:',-1 * teacherValue * Math.log2(act), -1 * (1-teacherValue) * Math.log2(1 - act));
         return -1 * teacherValue * Math.log2(act) - (1 - teacherValue) * Math.log(1 - act);
+        // return (this.delta ** 2);
     }
 }
 

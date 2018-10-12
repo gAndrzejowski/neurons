@@ -8,6 +8,7 @@ class NNode {
     }
 
     getZElements(input) {
+        // console.log(`inputs for node: ${input} to thetas ${this.theta}`);
         return vectorMultiply(input, this.theta)
     }
 
@@ -25,8 +26,10 @@ class NNode {
         this.delta = delta;
         return elementMultiply(this.theta, delta).slice(1);
     }
-    setGradients(activations) {
+    setGradients(activations, i) {
+        // console.log(`activations for node ${i} - ${activations}`);
        this.gradients = this.gradients.map((grad, gradIndex) => grad + activations[gradIndex] * this.delta);
+       // console.log(`gradients for node ${i} - ${this.gradients} from thetas: ${this.theta}`);
     }
     resetGradients() {
         this.gradients = this.gradients.map(() => 0);
