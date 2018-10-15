@@ -152,7 +152,7 @@ class Network {
             this.updateGradients();
         });
         cost += LAMBDA / this.lessonsLearnt * this.getRegularization();
-        // console.log(`cost in iteration ${this.iterations}: ${this.cost}`);
+        if (this.iterations % 10 === 0) console.log(`cost in iteration ${this.iterations}: ${this.cost}`);
         this.cost = cost;
         const nextThetas = gradientDescent(this.getThetaMatrix(), this.getGradientMatrix(), LEARNING_RATE);
         this.setThetaMatrix(nextThetas);
